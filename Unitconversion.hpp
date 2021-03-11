@@ -22,4 +22,4 @@ public:
 int float_to_uint(float x, float x_min, float x_max, int bits);
 float uint_to_float(int x_int, float x_min, float x_max, int bits);
 void toMiniCheetahCANData(float position, float velocity, float torque, float kp, float kd, ParameterRange &range, unsigned char (&data)[8]);
-void RevMiniCheetahCANData(unsigned char (&rdata)[6],ParameterRange &range,float (&data1[4]));
+void toParameter(unsigned char (&data)[6], ParameterRange &range, int &canID, float &position, float &velocity, float &current);
