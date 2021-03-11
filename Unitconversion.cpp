@@ -50,13 +50,14 @@ void toMiniCheetahCANData(float position, float velocity, float torque, float kp
     data[6] = ((kd_int & 0xf) << 4) | (t_int >> 8);
     data[7] = t_int & 0xff;
 }
-void RevMiniCheetahCANData(unsigned char (&rdata)[6],ParameterRange &range,float(&data1)[4])
-{   float id = (float)rdata[0];
-    float pos= (float)((float)rdata[1]*256+(float)rdata[2]-32768)*(range.positionRange.max-range.positionRange.min)/32768;
-    float vel= (float)((float)rdata[3]*16+(int)rdata[4]/16-2048)*(range.velocityRange.max-range.velocityRange.min)/2048;
-    float tor= (float)((int)rdata[4]%16*256+(float)rdata[5]-2048)*(range.torqueRange.max-range.torqueRange.min)/2048;
-    data1[0]=id;
-    data1[1]=pos;
-    data1[2]=vel;
-    data1[3]=tor;
+void toParameter(unsigned char (&data)[6], ParameterRange &range, int &canID, float &position, float &velocity, float &current)
+{
+    int p_int = (data[1] << 8) | data[2];
+    int v_int = (data[3] << 4) | (data[4] >> 4);
+    int t_int = (data[4] & 0xf) << 8 | data[5];
+
+    canID = data[0];
+    position = uint_to_float(p_int, range.positionRange.min, range.positionRange.max, 16);
+    velocity = uint_to_float(v_int, range.velocityRange.min, range.velocityRange.max, 12);
+    current = uint_to_float(t_int, range.torqueRange.min, range.torqueRange.max, 12);
 }
